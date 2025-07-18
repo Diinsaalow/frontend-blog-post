@@ -8,10 +8,9 @@ const FeaturedBlogCard = ({
   id,
   title,
   excerpt,
-  coverImage,
+  thumbnailUrl,
   author,
-  date,
-  tags = [],
+  createdAt,
 }) => {
   const [isPending, startTransition] = useTransition()
   const [isHovered, setIsHovered] = useState(false)
@@ -25,7 +24,10 @@ const FeaturedBlogCard = ({
       {/* Background image with overlay */}
       <div className='absolute inset-0'>
         <img
-          src={coverImage}
+          src={
+            thumbnailUrl ||
+            'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&q=80'
+          }
           alt={title}
           className={cn(
             'h-full w-full object-cover transition-transform duration-500',
@@ -37,13 +39,13 @@ const FeaturedBlogCard = ({
 
       {/* Content */}
       <div className='absolute bottom-0 left-0 right-0 p-6 md:p-8'>
-        <div className='flex flex-wrap gap-2 mb-4'>
+        {/* <div className='flex flex-wrap gap-2 mb-4'>
           {tags.map((tag) => (
             <span key={tag} className='tag bg-white/10 backdrop-blur-sm'>
               {tag}
             </span>
           ))}
-        </div>
+        </div> */}
 
         <Link to={`/blogs/${id}`} className='block'>
           <h2 className='text-3xl md:text-4xl font-bold text-white mb-4 transition-colors hover:text-primary'>
@@ -56,11 +58,11 @@ const FeaturedBlogCard = ({
           <div className='flex items-center text-sm text-white/70 space-x-4 mb-4 sm:mb-0'>
             <div className='flex items-center'>
               <User className='h-4 w-4 mr-1' />
-              <span>{author}</span>
+              <span>{author.fullName}</span>
             </div>
             <div className='flex items-center'>
               <CalendarDays className='h-4 w-4 mr-1' />
-              <span>{date}</span>
+              <span>{new Date(createdAt).toLocaleDateString()}</span>
             </div>
           </div>
 

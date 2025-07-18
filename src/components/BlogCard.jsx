@@ -8,9 +8,9 @@ const BlogCard = ({
   id,
   title,
   excerpt,
-  coverImage,
+  thumbnailUrl,
   author,
-  date,
+  createdAt,
   tags = [],
   featured = false,
 }) => {
@@ -33,7 +33,10 @@ const BlogCard = ({
         )}
       >
         <img
-          src={coverImage}
+          src={
+            thumbnailUrl ||
+            'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&q=80'
+          }
           alt={title}
           className={cn(
             'h-full w-full object-cover transition-transform duration-300',
@@ -72,11 +75,11 @@ const BlogCard = ({
           <div className='flex items-center text-sm text-muted-foreground space-x-4 mb-4 '>
             <div className='flex items-center '>
               <User className='h-4 w-4 mr-1' />
-              <span>{author}</span>
+              <span>{author.fullName}</span>
             </div>
             <div className='flex items-center'>
               <CalendarDays className='h-4 w-4 mr-1' />
-              <span>{date}</span>
+              <span>{new Date(createdAt).toLocaleDateString()}</span>
             </div>
           </div>
 
