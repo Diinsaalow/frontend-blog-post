@@ -1,21 +1,21 @@
-import { useNavigate } from "react-router";
+import { useNavigate } from 'react-router-dom'
 
-import BlogEditor from "../components/BlogEditor";
+import BlogEditor from '../components/BlogEditor'
 
 const NewBlog = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleCreateBlog = () => {
-    navigate("/blogs");
-  };
+    navigate('/blogs')
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="pt-24 pb-12 px-4">
+    <div className='min-h-screen bg-background'>
+      <main className='pt-24 pb-12 px-4'>
         <BlogEditor onSubmit={handleCreateBlog} />
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default NewBlog;
+export default NewBlog

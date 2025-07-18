@@ -1,14 +1,14 @@
-import { CalendarDays } from "lucide-react"
-import React from "react"
-import { useState } from "react"
-import {  useNavigate, useParams } from "react-router"
-import { Button } from "../components/ui/button"
-import { ChevronLeft } from "lucide-react"
-import BlogCard from "../components/BlogCard"
+import { CalendarDays } from 'lucide-react'
+import React from 'react'
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Button } from '../components/ui/button'
+import { ChevronLeft } from 'lucide-react'
+import BlogCard from '../components/BlogCard'
 
 const blogPost = {
-  id: "blog-1",
-  title: "Understanding React Hooks: A Comprehensive Guide",
+  id: 'blog-1',
+  title: 'Understanding React Hooks: A Comprehensive Guide',
   content: `
       <p>React Hooks are a revolutionary addition to React that allow you to use state and other React features without writing a class. This makes it easier to reuse stateful logic between components and makes your code more readable.</p>
   
@@ -58,12 +58,12 @@ const blogPost = {
       <p>React Hooks have revolutionized the way we write React components. They allow for more concise, reusable code that's easier to understand and maintain. By mastering Hooks, you can take your React skills to the next level and build more efficient, elegant applications.</p>
     `,
   coverImage:
-    "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&q=80",
-  author: "Sarah Williams",
-  authorImage: "https://randomuser.me/api/portraits/women/44.jpg",
-  date: "April 1, 2025",
-  readTime: "5 min read",
-  tags: ["React", "Hooks", "JavaScript"],
+    'https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&q=80',
+  author: 'Sarah Williams',
+  authorImage: 'https://randomuser.me/api/portraits/women/44.jpg',
+  date: 'April 1, 2025',
+  readTime: '5 min read',
+  tags: ['React', 'Hooks', 'JavaScript'],
 }
 
 const BlogDetails = () => {
@@ -75,67 +75,71 @@ const BlogDetails = () => {
   const post = blogPost
 
   return (
-    <main className="pt-16">
+    <main className='pt-16'>
       {/* Blog title and cover image */}
-      <div className="relative h-[50vh] sm:h-[60vh] bg-gray-100">
-        <div className="absolute top-0 left-0 right-0 p-6 md:p-8 max-w-4xl mx-auto">
-          <Button size="sm" variant='outline' className="  absolute top-4 left-4 z-10" onClick={() => navigate(-1)}>
-            <ChevronLeft className="h-4 w-4" />
+      <div className='relative h-[50vh] sm:h-[60vh] bg-gray-100'>
+        <div className='absolute top-0 left-0 right-0 p-6 md:p-8 max-w-4xl mx-auto'>
+          <Button
+            size='sm'
+            variant='outline'
+            className='  absolute top-4 left-4 z-10'
+            onClick={() => navigate(-1)}
+          >
+            <ChevronLeft className='h-4 w-4' />
             Back
           </Button>
         </div>
         <img
           src={post.coverImage}
           alt={post.title}
-          className="w-full h-full object-cover"
+          className='w-full h-full object-cover'
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20"></div>
+        <div className='absolute inset-0 bg-gradient-to-t from-black/70 to-black/20'></div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 max-w-4xl mx-auto">
-          <div className="flex flex-wrap gap-2 mb-4">
+        <div className='absolute bottom-0 left-0 right-0 p-6 md:p-8 max-w-4xl mx-auto'>
+          <div className='flex flex-wrap gap-2 mb-4'>
             {post.tags.map((tag) => (
-              <span key={tag} className="tag bg-white/20 backdrop-blur-sm">
+              <span key={tag} className='tag bg-white/20 backdrop-blur-sm'>
                 {tag}
               </span>
             ))}
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+          <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4'>
             {post.title}
           </h1>
-          <div className="flex items-center flex-wrap gap-4 text-white">
-            <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full overflow-hidden mr-2">
+          <div className='flex items-center flex-wrap gap-4 text-white'>
+            <div className='flex items-center'>
+              <div className='w-10 h-10 rounded-full overflow-hidden mr-2'>
                 <img
                   src={post.authorImage}
                   alt={post.author}
-                  className="w-full h-full object-cover"
+                  className='w-full h-full object-cover'
                 />
               </div>
               <span>{post.author}</span>
             </div>
-            <div className="flex items-center">
-              <CalendarDays className="h-4 w-4 mr-1" />
+            <div className='flex items-center'>
+              <CalendarDays className='h-4 w-4 mr-1' />
               <span>{post.date}</span>
             </div>
           </div>
         </div>
       </div>
 
-
       {/* Blog content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10'>
         <div
-          className="blog-content prose prose-lg max-w-none"
+          className='blog-content prose prose-lg max-w-none'
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </div>
 
       {/* Related posts */}
-      <div className="bg-muted py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold mb-8">Related Articles</h2>
+      <div className='bg-muted py-12'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <h2 className='text-2xl font-bold mb-8'>Related Articles</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             {/* Todo Related Posts  */}
             {[1, 3].map((blog, index) => (
               <BlogCard key={index} {...blogPost} />

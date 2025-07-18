@@ -3,7 +3,7 @@ import AuthForm from "../components/AuthForm";
 // import { useSignupMutation } from "../lib/services/authSlice";
 // import { setCredentials } from "../lib/features/userSlice";
 // import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 const SignUp = () => {
