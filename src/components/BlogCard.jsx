@@ -7,11 +7,10 @@ import { Button } from '../components/ui/button'
 const BlogCard = ({
   id,
   title,
-  excerpt,
+  content,
   thumbnailUrl,
   author,
   createdAt,
-  tags = [],
   featured = false,
 }) => {
   const [isPending, startTransition] = useTransition()
@@ -51,14 +50,6 @@ const BlogCard = ({
           featured ? 'md:w-1/2 justify-center' : 'flex-1'
         )}
       >
-        <div className='flex flex-wrap gap-2 mb-3'>
-          {tags.map((tag) => (
-            <span key={tag} className='tag'>
-              {tag}
-            </span>
-          ))}
-        </div>
-
         <h3
           className={cn(
             'font-bold transition-colors',
@@ -69,7 +60,9 @@ const BlogCard = ({
           <Link to={`/blogs/${id}`}>{title}</Link>
         </h3>
 
-        <p className='text-muted-foreground mb-4 line-clamp-2'>{excerpt}</p>
+        <p className='text-muted-foreground mb-4 line-clamp-2'>
+          {content.substring(0, 100)}...
+        </p>
 
         <div className='mt-auto'>
           <div className='flex items-center text-sm text-muted-foreground space-x-4 mb-4 '>

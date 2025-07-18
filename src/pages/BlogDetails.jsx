@@ -5,6 +5,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import { ChevronLeft } from 'lucide-react'
 import BlogCard from '../components/BlogCard'
+import { useFetch } from '../hooks/UseFetch'
+import { useEffect } from 'react'
+import { Loader2 } from 'lucide-react'
 
 const blogPost = {
   id: 'blog-1',
@@ -68,11 +71,30 @@ const blogPost = {
 
 const BlogDetails = () => {
   const { id } = useParams()
-  const [isScrolled, setIsScrolled] = useState(false)
   const navigate = useNavigate()
 
-  const post = blogPost
+  const { data: post, loading, error, fetchData } = useFetch([])
 
+  useEffect(() => {
+    fetchData(`${import.meta.env.VITE_API_URL}/api/v1/posts/${id}`)
+  }, [fetchData])
+
+  if (loading) {
+    return (
+      <div className='flex justify-center items-center h-full'>
+        <Loader2 className='w-8 h-8 animate-spin' />
+      </div>
+    )
+  }
+
+  if (error) {
+    return <div className='text-red-500'>Error: {error}</div>
+  }
+  if (!post || post.length === 0) {
+    return <div>No post found</div>
+  }
+
+  console.log('post', post)
   return (
     <main className='pt-16'>
       {/* Blog title and cover image */}
@@ -89,20 +111,16 @@ const BlogDetails = () => {
           </Button>
         </div>
         <img
-          src={post.coverImage}
+          src={
+            post.thumbnailUrl ||
+            'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&q=80'
+          }
           alt={post.title}
           className='w-full h-full object-cover'
         />
         <div className='absolute inset-0 bg-gradient-to-t from-black/70 to-black/20'></div>
 
         <div className='absolute bottom-0 left-0 right-0 p-6 md:p-8 max-w-4xl mx-auto'>
-          <div className='flex flex-wrap gap-2 mb-4'>
-            {post.tags.map((tag) => (
-              <span key={tag} className='tag bg-white/20 backdrop-blur-sm'>
-                {tag}
-              </span>
-            ))}
-          </div>
           <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4'>
             {post.title}
           </h1>
@@ -110,16 +128,19 @@ const BlogDetails = () => {
             <div className='flex items-center'>
               <div className='w-10 h-10 rounded-full overflow-hidden mr-2'>
                 <img
-                  src={post.authorImage}
-                  alt={post.author}
+                  src={
+                    post.author.profileImageUrl ||
+                    'https://randomuser.me/api/portraits/women/44.jpg'
+                  }
+                  alt={post.author.fullName}
                   className='w-full h-full object-cover'
                 />
               </div>
-              <span>{post.author}</span>
+              <span>{post.author.fullName}</span>
             </div>
             <div className='flex items-center'>
               <CalendarDays className='h-4 w-4 mr-1' />
-              <span>{post.date}</span>
+              <span>{new Date(post.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
@@ -131,20 +152,6 @@ const BlogDetails = () => {
           className='blog-content prose prose-lg max-w-none'
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
-      </div>
-
-      {/* Related posts */}
-      <div className='bg-muted py-12'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <h2 className='text-2xl font-bold mb-8'>Related Articles</h2>
-
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-            {/* Todo Related Posts  */}
-            {[1, 3].map((blog, index) => (
-              <BlogCard key={index} {...blogPost} />
-            ))}
-          </div>
-        </div>
       </div>
     </main>
   )
