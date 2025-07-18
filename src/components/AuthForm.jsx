@@ -60,7 +60,7 @@ const AuthForm = ({ type, onSubmit, isLoading }) => {
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder='John Doe' {...field} />
+                      <Input placeholder='Mohamed' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -77,7 +77,7 @@ const AuthForm = ({ type, onSubmit, isLoading }) => {
                   <FormControl>
                     <Input
                       type='email'
-                      placeholder='john@example.com'
+                      placeholder='mohamed@example.com'
                       {...field}
                     />
                   </FormControl>

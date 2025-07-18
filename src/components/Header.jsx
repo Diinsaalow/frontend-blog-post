@@ -3,18 +3,17 @@ import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, PenSquare } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { Button } from './ui/button'
-// import { useDispatch, useSelector } from "react-redux";
-// import { logout } from "../lib/features/userSlice";
+import { useUser } from '../context/UserContext'
+import { toast } from 'react-hot-toast'
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const location = useLocation()
   const isActive = (path) => location.pathname === path
-  // const dispatch = useDispatch();
-  // const { user } = useSelector((state) => state.user);
-  // Placeholder for user state from Context API
-  const user = null
+  const { user, logout, isAuthenticated, isLoading } = useUser()
+
+  console.log('The user is: ', user)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,11 +27,9 @@ const Header = () => {
     setIsOpen(false)
   }, [location])
 
-  // const handleLogout = () => {
-  //   dispatch(logout());
-  // };
   const handleLogout = () => {
-    // To be implemented with Context API
+    logout()
+    toast.success('Logout successfully')
   }
 
   return (
@@ -76,17 +73,19 @@ const Header = () => {
               >
                 Blogs
               </Link>
-              <Link to='/new-blog'>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  className='flex items-center gap-1'
-                >
-                  <PenSquare className='h-4 w-4' />
-                  Add New Blog
-                </Button>
-              </Link>
-              {user ? (
+              {!isLoading && user.role.toLowerCase() === 'admin' && (
+                <Link to='/new-blog'>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    className='flex items-center gap-1'
+                  >
+                    <PenSquare className='h-4 w-4' />
+                    Add New Blog
+                  </Button>
+                </Link>
+              )}
+              {!isLoading && isAuthenticated ? (
                 <>
                   <Button
                     variant='destructive'
@@ -96,7 +95,7 @@ const Header = () => {
                     Logout
                   </Button>
                 </>
-              ) : (
+              ) : !isLoading ? (
                 <>
                   <Link to='/signin'>
                     <Button variant='ghost' size='sm'>
@@ -108,6 +107,8 @@ const Header = () => {
                     <Button size='sm'>Sign Up</Button>
                   </Link>
                 </>
+              ) : (
+                <div className='animate-pulse bg-gray-200 h-8 w-16 rounded'></div>
               )}
             </div>
           </div>
@@ -164,14 +165,28 @@ const Header = () => {
             </Link>
 
             <div className='pt-4 flex flex-col space-y-2'>
-              <Link to='/signin'>
-                <Button variant='outline' className='w-full'>
-                  Sign In
+              {!isLoading && isAuthenticated ? (
+                <Button
+                  variant='destructive'
+                  className='w-full'
+                  onClick={handleLogout}
+                >
+                  Logout
                 </Button>
-              </Link>
-              <Link to='/signup'>
-                <Button className='w-full'>Sign Up</Button>
-              </Link>
+              ) : !isLoading ? (
+                <>
+                  <Link to='/signin'>
+                    <Button variant='outline' className='w-full'>
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to='/signup'>
+                    <Button className='w-full'>Sign Up</Button>
+                  </Link>
+                </>
+              ) : (
+                <div className='animate-pulse bg-gray-200 h-8 w-full rounded'></div>
+              )}
             </div>
           </div>
         </div>

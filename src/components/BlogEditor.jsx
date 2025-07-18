@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from './ui/form'
 import { ImageIcon, X } from 'lucide-react'
-import { toast } from 'sonner'
+import { toast } from 'react-hot-toast'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { Textarea } from './ui/textarea'

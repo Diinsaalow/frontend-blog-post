@@ -68,7 +68,6 @@ const blogPost = {
 
 const BlogDetails = () => {
   const { id } = useParams()
-  console.log(id)
   const [isScrolled, setIsScrolled] = useState(false)
   const navigate = useNavigate()
 
