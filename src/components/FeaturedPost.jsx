@@ -26,8 +26,8 @@ const FeaturedPost = () => {
     return <div className='text-center text-red-500'>Error: {error}</div>
   }
 
-  if (!posts || posts.length === 0) {
-    return <div className='text-center text-gray-500'>No posts found</div>
+  if (!featuredBlog) {
+    return null
   }
 
   return (

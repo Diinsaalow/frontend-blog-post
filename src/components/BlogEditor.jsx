@@ -9,7 +9,7 @@ import { Textarea } from './ui/textarea'
 import { useUser } from '../context/UserContext'
 import { useFetch } from '../hooks/UseFetch'
 
-const BlogEditor = ({ initialData, onSubmit, isEdit = false, id }) => {
+const BlogEditor = ({ initialData, isEdit = false, id }) => {
   const [isPending, startTransition] = useTransition()
   const [imagePreview, setImagePreview] = useState(
     initialData?.coverImage || null
@@ -42,27 +42,46 @@ const BlogEditor = ({ initialData, onSubmit, isEdit = false, id }) => {
 
   const { fetchData } = useFetch()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    startTransition(() => {
+    startTransition(async () => {
       try {
+        let response
         if (isEdit) {
-          fetchData(`${import.meta.env.VITE_API_URL}/api/v1/posts/${id}`, {
-            method: 'PUT',
-            headers: getAuthHeaders(),
-            body: JSON.stringify(formData),
-          })
+          response = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/v1/posts/${id}`,
+            {
+              method: 'PUT',
+              headers: getAuthHeaders(),
+              body: JSON.stringify(formData),
+            }
+          )
         } else {
-          fetchData(`${import.meta.env.VITE_API_URL}/api/v1/posts`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-            body: JSON.stringify(formData),
-          })
+          response = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/v1/posts`,
+            {
+              method: 'POST',
+              headers: getAuthHeaders(),
+              body: JSON.stringify(formData),
+            }
+          )
         }
-        toast.success('Blog post saved successfully')
-        // navigate('/')
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'Failed to save blog post')
+        }
+
+        toast.success(
+          isEdit
+            ? 'Blog post updated successfully'
+            : 'Blog post created successfully'
+        )
+        navigate('/blogs')
       } catch (error) {
-        toast.error('Failed to save blog post. Please try again.')
+        toast.error(
+          error.message || 'Failed to save blog post. Please try again.'
+        )
         console.error(error)
       }
     })

@@ -90,13 +90,15 @@ const RecentPosts = () => {
         ))}
       </div>
 
-      <div className='flex justify-center mt-10'>
-        <Link to='/blogs'>
-          <Button variant='outline' size='lg'>
-            View All Posts
-          </Button>
-        </Link>
-      </div>
+      {posts.length > 3 && (
+        <div className='flex justify-center mt-10'>
+          <Link to='/blogs'>
+            <Button variant='outline' size='lg'>
+              View All Posts
+            </Button>
+          </Link>
+        </div>
+      )}
     </div>
   )
 }

@@ -24,14 +24,12 @@ const NewBlog = () => {
     }
   }, [user.role, isLoading, navigate])
 
-  const handleCreateBlog = () => {
-    navigate('/blogs')
-  }
+
 
   return (
     <div className='min-h-screen bg-background'>
       <main className='pt-24 pb-12 px-4'>
-        <BlogEditor onSubmit={handleCreateBlog} />
+        <BlogEditor  />
       </main>
     </div>
   )

@@ -1,16 +1,21 @@
 import { useState, useEffect, useTransition } from 'react'
+import { useNavigate } from 'react-router-dom'
 import BlogCard from '../components/BlogCard'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
-import { Search } from 'lucide-react'
+import { Search, Plus } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { useFetch } from '../hooks/UseFetch'
+import { useUser } from '../context/UserContext'
 
 const Blogs = () => {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [filteredBlogs, setFilteredBlogs] = useState([])
   const [isPending, startTransition] = useTransition()
   const [animatedBlogs, setAnimatedBlogs] = useState(false)
+  const { user } = useUser()
+  const isAdmin = user.role?.toLowerCase() === 'admin'
 
   const { data: blogs, loading, error, fetchData } = useFetch([])
 
@@ -24,6 +29,10 @@ const Blogs = () => {
       setAnimatedBlogs(true)
     }, 300)
   }, [])
+
+  const handleDeleteBlog = (deletedId) => {
+    setFilteredBlogs((prev) => prev.filter((blog) => blog.id !== deletedId))
+  }
 
   useEffect(() => {
     startTransition(() => {
@@ -56,15 +65,18 @@ const Blogs = () => {
         <div className='flex justify-between items-center mb-8'>
           <h1 className='text-3xl font-bold'>All Blog Posts</h1>
 
-          <div className='relative'>
-            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4' />
-            <Input
-              type='search'
-              placeholder='Search blogs...'
-              className='pl-10 w-full md:w-[300px]'
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <div className='flex items-center space-x-4'>
+            <div className='relative'>
+              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4' />
+              <Input
+                type='search'
+                placeholder='Search blogs...'
+                className='pl-10 w-full md:w-[300px]'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
           </div>
         </div>
 
@@ -75,14 +87,6 @@ const Blogs = () => {
             <p className='text-muted-foreground mb-6'>
               Try changing your search or category filters
             </p>
-            <Button
-              onClick={() => {
-                setActiveCategory('All')
-                setSearchQuery('')
-              }}
-            >
-              Reset Filters
-            </Button>
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
@@ -97,14 +101,14 @@ const Blogs = () => {
                   { 'transition-delay-300': index % 3 === 2 }
                 )}
               >
-                <BlogCard {...blog} />
+                <BlogCard {...blog} onDelete={handleDeleteBlog} />
               </div>
             ))}
           </div>
         )}
 
         {/* Pagination */}
-        <div className='flex justify-center mt-12'>
+        {/* <div className='flex justify-center mt-12'>
           <div className='flex items-center space-x-2'>
             <Button variant='outline' size='sm' disabled>
               Previous
@@ -126,7 +130,7 @@ const Blogs = () => {
               Next
             </Button>
           </div>
-        </div>
+        </div> */}
       </main>
     </div>
   )

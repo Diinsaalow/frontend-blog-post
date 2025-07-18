@@ -1,4 +1,4 @@
-import { CalendarDays } from 'lucide-react'
+import { CalendarDays, Edit, Trash2 } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -8,6 +8,8 @@ import BlogCard from '../components/BlogCard'
 import { useFetch } from '../hooks/UseFetch'
 import { useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
+import { useUser } from '../context/UserContext'
+import { toast } from 'react-hot-toast'
 
 const blogPost = {
   id: 'blog-1',
@@ -72,6 +74,8 @@ const blogPost = {
 const BlogDetails = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user, getAuthHeaders } = useUser()
+  const isAdmin = user.role?.toLowerCase() === 'admin'
 
   const { data: post, loading, error, fetchData } = useFetch([])
 
@@ -100,15 +104,66 @@ const BlogDetails = () => {
       {/* Blog title and cover image */}
       <div className='relative h-[50vh] sm:h-[60vh] bg-gray-100'>
         <div className='absolute top-0 left-0 right-0 p-6 md:p-8 max-w-4xl mx-auto'>
-          <Button
-            size='sm'
-            variant='outline'
-            className='  absolute top-4 left-4 z-10'
-            onClick={() => navigate(-1)}
-          >
-            <ChevronLeft className='h-4 w-4' />
-            Back
-          </Button>
+          <div className='flex items-center justify-between'>
+            <Button
+              size='sm'
+              variant='outline'
+              className='z-10'
+              onClick={() => navigate(-1)}
+            >
+              <ChevronLeft className='h-4 w-4' />
+              Back
+            </Button>
+
+            {isAdmin && (
+              <div className='flex items-center space-x-2'>
+                <Button
+                  size='sm'
+                  variant='outline'
+                  className='z-10 bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
+                  onClick={() => navigate(`/blogs/${id}/edit`)}
+                >
+                  <Edit className='h-4 w-4 mr-1' />
+                  Edit
+                </Button>
+                <Button
+                  size='sm'
+                  variant='outline'
+                  className='z-10 bg-red-600 text-white border-red-600 hover:bg-red-700'
+                  onClick={async () => {
+                    if (
+                      window.confirm(
+                        'Are you sure you want to delete this blog post?'
+                      )
+                    ) {
+                      try {
+                        const response = await fetch(
+                          `${import.meta.env.VITE_API_URL}/api/v1/posts/${id}`,
+                          {
+                            method: 'DELETE',
+                            headers: getAuthHeaders(),
+                          }
+                        )
+
+                        if (!response.ok) {
+                          throw new Error('Failed to delete blog post')
+                        }
+
+                        toast.success('Blog post deleted successfully')
+                        navigate('/blogs')
+                      } catch (error) {
+                        toast.error('Failed to delete blog post')
+                        console.error(error)
+                      }
+                    }
+                  }}
+                >
+                  <Trash2 className='h-4 w-4 mr-1' />
+                  Delete
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
         <img
           src={

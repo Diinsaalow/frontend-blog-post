@@ -6,6 +6,7 @@ import Home from './pages/Home.jsx'
 import Blogs from './pages/Blogs.jsx'
 import BlogDetails from './pages/BlogDetails.jsx'
 import NewBlog from './pages/NewBlog.jsx'
+import EditBlog from './pages/EditBlog.jsx'
 import SignIn from './pages/SignIn.jsx'
 import SignUp from './pages/SignUp.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -25,6 +26,14 @@ const App = () => {
           element={
             <ProtectedRoute>
               <NewBlog />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/blogs/:id/edit'
+          element={
+            <ProtectedRoute>
+              <EditBlog />
             </ProtectedRoute>
           }
         />

@@ -1,8 +1,10 @@
 import { useState, useTransition } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { cn } from '../lib/utils'
-import { CalendarDays, Clock, User } from 'lucide-react'
+import { CalendarDays, Clock, User, Edit, Trash2 } from 'lucide-react'
 import { Button } from '../components/ui/button'
+import { useUser } from '../context/UserContext'
+import { toast } from 'react-hot-toast'
 
 const BlogCard = ({
   id,
@@ -12,9 +14,13 @@ const BlogCard = ({
   author,
   createdAt,
   featured = false,
+  onDelete,
 }) => {
   const [isPending, startTransition] = useTransition()
   const [isHovered, setIsHovered] = useState(false)
+  const navigate = useNavigate()
+  const { user, getAuthHeaders } = useUser()
+  const isAdmin = user.role?.toLowerCase() === 'admin'
 
   return (
     <article
@@ -76,14 +82,65 @@ const BlogCard = ({
             </div>
           </div>
 
-          <Link to={`/blogs/${id}`}>
-            <Button
-              variant='ghost'
-              className='text-primary hover:text-primary/80 px-3'
-            >
-              Read More →
-            </Button>
-          </Link>
+          <div className='flex items-center justify-between'>
+            <Link to={`/blogs/${id}`}>
+              <Button
+                variant='ghost'
+                className='text-primary hover:text-primary/80 px-3'
+              >
+                Read More →
+              </Button>
+            </Link>
+
+            {isAdmin && (
+              <div className='flex items-center space-x-2'>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  className='text-blue-600 hover:text-blue-700 px-2'
+                  onClick={() => navigate(`/blogs/${id}/edit`)}
+                >
+                  <Edit className='h-4 w-4' />
+                </Button>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  className='text-red-600 hover:text-red-700 px-2'
+                  onClick={async () => {
+                    if (
+                      window.confirm(
+                        'Are you sure you want to delete this blog post?'
+                      )
+                    ) {
+                      try {
+                        const response = await fetch(
+                          `${import.meta.env.VITE_API_URL}/api/v1/posts/${id}`,
+                          {
+                            method: 'DELETE',
+                            headers: getAuthHeaders(),
+                          }
+                        )
+
+                        if (!response.ok) {
+                          throw new Error('Failed to delete blog post')
+                        }
+
+                        toast.success('Blog post deleted successfully')
+                        if (onDelete) {
+                          onDelete(id)
+                        }
+                      } catch (error) {
+                        toast.error('Failed to delete blog post')
+                        console.error(error)
+                      }
+                    }
+                  }}
+                >
+                  <Trash2 className='h-4 w-4' />
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </article>
