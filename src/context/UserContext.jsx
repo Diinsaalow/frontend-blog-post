@@ -4,8 +4,10 @@ const UserContext = createContext()
 
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState({
+    id: null,
     fullName: '',
     email: '',
+    profileImageUrl: '',
     role: '',
     token: '',
     isAuthenticated: false,
@@ -75,8 +77,10 @@ export const UserContextProvider = ({ children }) => {
       }
 
       const userData = {
+        id: data.id,
         fullName: data.fullName,
-        email: credentials.email, // We'll need to get this from the backend response
+        email: data.email,
+        profileImageUrl: data.profileImageUrl,
         role: data.role,
         token: data.token,
         isAuthenticated: true,
@@ -121,8 +125,10 @@ export const UserContextProvider = ({ children }) => {
       }
 
       const newUserData = {
+        id: data.id,
         fullName: data.fullName,
-        email: userData.email,
+        email: data.email,
+        profileImageUrl: data.profileImageUrl,
         role: data.role,
         token: data.token,
         isAuthenticated: true,
@@ -149,8 +155,10 @@ export const UserContextProvider = ({ children }) => {
 
     // Reset user state
     const resetUser = {
+      id: null,
       fullName: '',
       email: '',
+      profileImageUrl: '',
       role: '',
       token: '',
       isAuthenticated: false,
