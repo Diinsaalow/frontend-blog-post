@@ -19,6 +19,7 @@ const BlogEditor = ({ initialData, isEdit = false, id }) => {
     title: initialData?.title || '',
     content: initialData?.content || '',
     coverImage: initialData?.coverImage || '',
+    isFeatured: initialData?.isFeatured || false,
   })
 
   const navigate = useNavigate()
@@ -36,8 +37,11 @@ const BlogEditor = ({ initialData, isEdit = false, id }) => {
   }
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    const { name, value, type, checked } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }))
   }
 
   const { fetchData } = useFetch()
@@ -154,6 +158,26 @@ const BlogEditor = ({ initialData, isEdit = false, id }) => {
             className='font-serif resize-none min-h-[150px] text-lg leading-relaxed'
           />
         </div>
+
+        <div className='space-y-2'>
+          <div className='flex items-center space-x-2'>
+            <input
+              type='checkbox'
+              id='isFeatured'
+              name='isFeatured'
+              checked={formData.isFeatured}
+              onChange={handleInputChange}
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
+            />
+            <label htmlFor='isFeatured' className='text-sm font-medium'>
+              Mark as Featured Post
+            </label>
+          </div>
+          <p className='text-xs text-gray-500'>
+            Featured posts will be highlighted on the homepage
+          </p>
+        </div>
+
         <div className='flex items-center space-x-4'>
           <Button type='submit' disabled={isPending}>
             {isPending ? 'Saving...' : isEdit ? 'Update Post' : 'Publish Post'}
