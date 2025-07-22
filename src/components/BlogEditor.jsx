@@ -18,7 +18,7 @@ const BlogEditor = ({ initialData, isEdit = false, id }) => {
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     content: initialData?.content || "",
-    isFeatured: initialData?.isFeatured || false,
+    coverImage: initialData?.coverImage || "",
   });
 
   const navigate = useNavigate();
@@ -36,12 +36,11 @@ const BlogEditor = ({ initialData, isEdit = false, id }) => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const { fetchData } = useFetch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

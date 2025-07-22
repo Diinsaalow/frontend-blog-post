@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from './ui/button'
 import { Textarea } from './ui/textarea'
 import { useUser } from '../context/UserContext'
@@ -7,6 +8,7 @@ import { Edit, Trash2, Send, X, Check } from 'lucide-react'
 
 const CommentSection = ({ postId }) => {
   const { user, getAuthHeaders } = useUser()
+  const navigate = useNavigate()
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(true)
   const [newComment, setNewComment] = useState('')
@@ -40,6 +42,13 @@ const CommentSection = ({ postId }) => {
   const handleSubmitComment = async (e) => {
     e.preventDefault()
     if (!newComment.trim()) return
+
+    // Check if user is authenticated
+    if (!user) {
+      toast.error('Please login to comment')
+      navigate('/signin')
+      return
+    }
 
     setSubmitting(true)
     try {
@@ -155,52 +164,56 @@ const CommentSection = ({ postId }) => {
     )
   }
 
+  console.log(user && user.role ? 'use logged in' : 'use not logged in')
+
   return (
     <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
       <h2 className='text-2xl font-bold mb-6'>Comments ({comments.length})</h2>
 
       {/* Add new comment form */}
-      {user && (
-        <form onSubmit={handleSubmitComment} className='mb-8'>
-          <div className='flex items-start space-x-3'>
-            <div className='w-10 h-10 rounded-full overflow-hidden flex-shrink-0'>
-              <img
-                src={
-                  user.profileImageUrl ||
-                  'https://randomuser.me/api/portraits/men/1.jpg'
-                }
-                alt={user.fullName}
-                className='w-full h-full object-cover'
-              />
-            </div>
-            <div className='flex-1'>
-              <Textarea
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder='Write a comment...'
-                className='min-h-[100px] resize-none'
-                disabled={submitting}
-              />
-              <div className='flex justify-end mt-2'>
-                <Button
-                  type='submit'
-                  disabled={!newComment.trim() || submitting}
-                  className='bg-blue-600 text-white hover:bg-blue-700'
-                >
-                  {submitting ? (
-                    <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white'></div>
-                  ) : (
-                    <>
-                      <Send className='h-4 w-4 mr-2' />
-                      Post Comment
-                    </>
-                  )}
-                </Button>
-              </div>
+      <form onSubmit={handleSubmitComment} className='mb-8'>
+        <div className='flex items-start space-x-3'>
+          <div className='w-10 h-10 rounded-full overflow-hidden flex-shrink-0'>
+            <img
+              src={
+                user?.profileImageUrl ||
+                'https://randomuser.me/api/portraits/men/1.jpg'
+              }
+              alt={user?.fullName || 'Guest'}
+              className='w-full h-full object-cover'
+            />
+          </div>
+          <div className='flex-1'>
+            <Textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder={
+                user && user.role
+                  ? 'Write a comment...'
+                  : 'Login to write a comment...'
+              }
+              className='min-h-[100px] resize-none'
+              disabled={submitting}
+            />
+            <div className='flex justify-end mt-2'>
+              <Button
+                type='submit'
+                disabled={!newComment.trim() || submitting}
+                className='bg-blue-600 text-white hover:bg-blue-700'
+              >
+                {submitting ? (
+                  <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white'></div>
+                ) : (
+                  <>
+                    <Send className='h-4 w-4 mr-2' />
+                    {user && user.role ? 'Post Comment' : 'Login to Comment'}
+                  </>
+                )}
+              </Button>
             </div>
           </div>
-        </form>
-      )}
+        </div>
+      </form>
 
       {/* Comments list */}
       <div className='space-y-6'>
@@ -232,51 +245,53 @@ const CommentSection = ({ postId }) => {
                         {new Date(comment.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    {user && user.id === comment.author.id && (
-                      <div className='flex items-center space-x-2'>
-                        {editingComment === comment.id ? (
-                          <>
-                            <Button
-                              size='sm'
-                              variant='outline'
-                              onClick={() => handleUpdateComment(comment.id)}
-                              disabled={submitting}
-                              className='text-green-600 border-green-600 hover:bg-green-50'
-                            >
-                              <Check className='h-4 w-4' />
-                            </Button>
-                            <Button
-                              size='sm'
-                              variant='outline'
-                              onClick={cancelEditing}
-                              disabled={submitting}
-                              className='text-gray-600 border-gray-600 hover:bg-gray-50'
-                            >
-                              <X className='h-4 w-4' />
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            <Button
-                              size='sm'
-                              variant='outline'
-                              onClick={() => startEditing(comment)}
-                              className='text-blue-600 border-blue-600 hover:bg-blue-50'
-                            >
-                              <Edit className='h-4 w-4' />
-                            </Button>
-                            <Button
-                              size='sm'
-                              variant='outline'
-                              onClick={() => handleDeleteComment(comment.id)}
-                              className='text-red-600 border-red-600 hover:bg-red-50'
-                            >
-                              <Trash2 className='h-4 w-4' />
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    )}
+                    {user &&
+                      (user.id === comment.author.id ||
+                        user.role === 'ADMIN') && (
+                        <div className='flex items-center space-x-2'>
+                          {editingComment === comment.id ? (
+                            <>
+                              <Button
+                                size='sm'
+                                variant='outline'
+                                onClick={() => handleUpdateComment(comment.id)}
+                                disabled={submitting}
+                                className='text-green-600 border-green-600 hover:bg-green-50'
+                              >
+                                <Check className='h-4 w-4' />
+                              </Button>
+                              <Button
+                                size='sm'
+                                variant='outline'
+                                onClick={cancelEditing}
+                                disabled={submitting}
+                                className='text-gray-600 border-gray-600 hover:bg-gray-50'
+                              >
+                                <X className='h-4 w-4' />
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                size='sm'
+                                variant='outline'
+                                onClick={() => startEditing(comment)}
+                                className='text-blue-600 border-blue-600 hover:bg-blue-50'
+                              >
+                                <Edit className='h-4 w-4' />
+                              </Button>
+                              <Button
+                                size='sm'
+                                variant='outline'
+                                onClick={() => handleDeleteComment(comment.id)}
+                                className='text-red-600 border-red-600 hover:bg-red-50'
+                              >
+                                <Trash2 className='h-4 w-4' />
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      )}
                   </div>
                   {editingComment === comment.id ? (
                     <div className='space-y-2'>
