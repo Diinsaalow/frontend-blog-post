@@ -40,7 +40,6 @@ const BlogEditor = ({ initialData, isEdit = false, id }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const { fetchData } = useFetch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
